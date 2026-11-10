@@ -1,4 +1,4 @@
-import { getCreatures } from "./data.js";
+import { getCreatures } from "./api.js";
 
 let cardsContainer = document.querySelector(".cards-container");
 let detailSection = document.getElementById("detail");
@@ -19,7 +19,6 @@ async function init(creatures) {
         const primaryType = creature.types[0]?.type?.name || 'normal';
         const totalStats = creature.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
 
-        // Notice we put data-id="${creature.id}" on the article tag
         cardsContainer.innerHTML += `
             <article class="flex flex-col gap-3 rounded-card bg-white p-3 pb-4 shadow-sm poke-card cursor-pointer" data-id="${creature.id}">
                 <div class="relative flex h-36 items-center justify-center rounded-xl bg-brand-light">
@@ -58,7 +57,9 @@ cardsContainer.addEventListener('click', (event) => {
     if (!creature) return;
     const image = creature.sprites.other?.['official-artwork']?.front_default || creature.sprites.front_default;
     const primaryType = creature.types[0]?.type?.name || 'normal';
-    const totalStats = creature.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
+    const HP = creature.stats[0].base_stat;
+    const ATTACK = creature.stats[1].base_stat;
+    const DEFENCE = creature.stats[2].base_stat;
 
 
     detailSection.innerHTML = `
@@ -75,9 +76,9 @@ cardsContainer.addEventListener('click', (event) => {
         </div>
         <p class="text-gray-700">Une créature unique prête pour l'aventure.</p>
         <div class="flex flex-col gap-2 text-sm">
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">PV</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 w-[${creature.stats.hp}%] rounded-full bg-brand"></span></span><span class="text-right font-mono">${creature.stats.hp}</span></div>
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">Attaque</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 w-[${creature.stats.attack}%] rounded-full bg-brand"></span></span><span class="text-right font-mono">${creature.stats.attack}</span></div>
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">Défense</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 w-[${creature.stats.defence}%] rounded-full bg-brand"></span></span><span class="text-right font-mono">${creature.stats.defence}</span></div>
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">HP</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(HP)}%;"></span></span><span class="text-right font-mono">${HP}</span></div>
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">Attaque</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(ATTACK)}%;"></span></span><span class="text-right font-mono">${ATTACK}</span></div>
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">Défense</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(DEFENCE)}%;"></span></span><span class="text-right font-mono">${DEFENCE}</span></div>
         </div>
         <button type="button" class="btn-primary">Ajouter à l'équipe</button>
     `;
@@ -111,7 +112,7 @@ function searchFilter() {
 
         const perName = creature.name.toLowerCase().includes(text);
 
-        const primaryType = creature.type;
+        const primaryType = creature.types[0]?.type?.name || 'normal';
 
         const perType = currentType === "tous" || primaryType === currentType;
 
