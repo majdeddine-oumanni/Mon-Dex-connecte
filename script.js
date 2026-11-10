@@ -6,29 +6,31 @@ let backBtn = document.getElementById("back-btn");
 
 
 let allCreatures = [];
-allCreatures = getCreatures();
+const limitCreatures = 20;
+document.getElementById("creature-count").textContent = `${limitCreatures}`
+allCreatures = await getCreatures(limitCreatures);
 async function init(creatures) {
 
     
     cardsContainer.innerHTML = "";
 
     creatures.forEach((creature) => {
-        // const image = creature.sprites.other?.['official-artwork']?.front_default || creature.sprites.front_default;
-        // const primaryType = creature.types[0]?.type?.name || 'normal';
-        // const totalStats = creature.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
+        const image = creature.sprites.other?.['official-artwork']?.front_default || creature.sprites.front_default;
+        const primaryType = creature.types[0]?.type?.name || 'normal';
+        const totalStats = creature.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
 
         // Notice we put data-id="${creature.id}" on the article tag
         cardsContainer.innerHTML += `
             <article class="flex flex-col gap-3 rounded-card bg-white p-3 pb-4 shadow-sm poke-card cursor-pointer" data-id="${creature.id}">
                 <div class="relative flex h-36 items-center justify-center rounded-xl bg-brand-light">
-                    <img src="${creature.image}" alt="${creature.name}" class="object-contain poke_img">
+                    <img src="${image}" alt="${creature.species.name}" class="object-contain poke_img">
                     <span class="absolute left-3 top-2 font-mono text-sm text-muted">#${creature.id}</span>
                 </div>
                 <div class="flex items-center justify-between gap-2">
-                    <h3 class="font-display text-xl font-semibold capitalize">${creature.name}</h3>
-                    <span class="rounded-full bg-brand-light px-3 py-1 text-sm font-bold text-ink capitalize">${creature.type}</span>
+                    <h3 class="font-display text-xl font-semibold capitalize">${creature.species.name}</h3>
+                    <span class="rounded-full bg-brand-light px-3 py-1 text-sm font-bold text-ink capitalize">${primaryType}</span>
                 </div>
-                <p class="text-sm text-muted">${creature.level}</p>
+                <p class="text-sm text-muted">${totalStats}</p>
                 <button type="button" class="btn-outline">Ajouter à l'équipe</button>
             </article>
         `;
@@ -54,6 +56,10 @@ cardsContainer.addEventListener('click', (event) => {
     const creatureId = Number(card.getAttribute('data-id'));
     const creature = allCreatures.find(c => c.id === creatureId);
     if (!creature) return;
+    const image = creature.sprites.other?.['official-artwork']?.front_default || creature.sprites.front_default;
+    const primaryType = creature.types[0]?.type?.name || 'normal';
+    const totalStats = creature.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
+
 
     detailSection.innerHTML = `
         <div class="flex items-center justify-between">
@@ -61,11 +67,11 @@ cardsContainer.addEventListener('click', (event) => {
             <button type="button" aria-label="Fermer le détail" class="btn-outline w-11 px-0" id="back-btn">✕</button>
         </div>
         <div class="flex h-48 items-center justify-center rounded-2xl bg-brand-light">
-            <img src="${creature.image}" alt="${creature.name}" class="h-40 object-contain">
+            <img src="${image}" alt="${creature.species.name}" class="h-40 object-contain">
         </div>
         <div class="flex items-center justify-between">
-            <h2 class="font-display text-3xl font-extrabold capitalize">${creature.name}</h2>
-            <span class="rounded-full bg-brand-light px-3 py-1 text-sm font-bold capitalize">${creature.type}</span>
+            <h2 class="font-display text-3xl font-extrabold capitalize">${creature.species.name}</h2>
+            <span class="rounded-full bg-brand-light px-3 py-1 text-sm font-bold capitalize">${primaryType}</span>
         </div>
         <p class="text-gray-700">Une créature unique prête pour l'aventure.</p>
         <div class="flex flex-col gap-2 text-sm">
