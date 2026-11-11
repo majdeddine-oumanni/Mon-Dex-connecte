@@ -8,6 +8,7 @@
     "build": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify"
   },
   "devDependencies": {
+    "tailwind-watch": "^0.0.6",
     "tailwindcss": "3.4.19"
   }
 }
