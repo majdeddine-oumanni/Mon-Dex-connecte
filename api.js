@@ -1,21 +1,20 @@
-let customizedCreatures = [];
-
-export async function getCreatures(limit) {
+export async function getCreatures(limit, offset) {
     try{
 
-        let response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
+        let response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
 
         if(!response.ok){
             throw new Error("the fetch wasn't successful");
         }
-
-        let data = await response.json();
+ 
+        let data = await response.json(); 
         let results = data.results;
         
         let promises = results.map(async (pokemon)=>{
             let res = await fetch(pokemon.url);
             return res.json();
         })
+        let customizedCreatures = [];
 
         let creatures = await Promise.all(promises);
         creatures.forEach((creature)=>{

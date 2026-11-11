@@ -6,9 +6,23 @@ let backBtn = document.getElementById("back-btn");
 
 
 let allCreatures = [];
-const limitCreatures = 20;
+let limitCreatures = 20;
+let offset = 0;
 document.getElementById("creature-count").textContent = `${limitCreatures}`
-allCreatures = await getCreatures(limitCreatures);
+
+document.getElementById("charge").addEventListener("click", async () => {
+
+    offset += limitCreatures;
+
+    let newCreatures = await getCreatures(limitCreatures, offset);
+
+    allCreatures.push(...newCreatures);
+
+    init(allCreatures);
+});
+
+allCreatures = await getCreatures(limitCreatures, offset);
+
 async function init(creatures) {
 
     
