@@ -15,21 +15,18 @@ async function init(creatures) {
     cardsContainer.innerHTML = "";
 
     creatures.forEach((creature) => {
-        const image = creature.sprites.other?.['official-artwork']?.front_default || creature.sprites.front_default;
-        const primaryType = creature.types[0]?.type?.name || 'normal';
-        const totalStats = creature.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
 
         cardsContainer.innerHTML += `
             <article class="flex flex-col gap-3 rounded-card bg-white p-3 pb-4 shadow-sm poke-card cursor-pointer" data-id="${creature.id}">
                 <div class="relative flex h-36 items-center justify-center rounded-xl bg-brand-light">
-                    <img src="${image}" alt="${creature.species.name}" class="object-contain poke_img">
+                    <img src="${creature.image}" alt="${creature.name}" class="object-contain poke_img">
                     <span class="absolute left-3 top-2 font-mono text-sm text-muted">#${creature.id}</span>
                 </div>
                 <div class="flex items-center justify-between gap-2">
-                    <h3 class="font-display text-xl font-semibold capitalize">${creature.species.name}</h3>
-                    <span class="rounded-full bg-brand-light px-3 py-1 text-sm font-bold text-ink capitalize">${primaryType}</span>
+                    <h3 class="font-display text-xl font-semibold capitalize">${creature.name}</h3>
+                    <span class="rounded-full bg-brand-light px-3 py-1 text-sm font-bold text-ink capitalize">${creature.primaryType}</span>
                 </div>
-                <p class="text-sm text-muted">${totalStats}</p>
+                <p class="text-sm text-muted">${creature.totalStats}</p>
                 <button type="button" class="btn-outline">Ajouter à l'équipe</button>
             </article>
         `;
@@ -55,11 +52,6 @@ cardsContainer.addEventListener('click', (event) => {
     const creatureId = Number(card.getAttribute('data-id'));
     const creature = allCreatures.find(c => c.id === creatureId);
     if (!creature) return;
-    const image = creature.sprites.other?.['official-artwork']?.front_default || creature.sprites.front_default;
-    const primaryType = creature.types[0]?.type?.name || 'normal';
-    const HP = creature.stats[0].base_stat;
-    const ATTACK = creature.stats[1].base_stat;
-    const DEFENCE = creature.stats[2].base_stat;
 
 
     detailSection.innerHTML = `
@@ -68,17 +60,17 @@ cardsContainer.addEventListener('click', (event) => {
             <button type="button" aria-label="Fermer le détail" class="btn-outline w-11 px-0" id="back-btn">✕</button>
         </div>
         <div class="flex h-48 items-center justify-center rounded-2xl bg-brand-light">
-            <img src="${image}" alt="${creature.species.name}" class="h-40 object-contain">
+            <img src="${creature.image}" alt="${creature.name}" class="h-40 object-contain">
         </div>
         <div class="flex items-center justify-between">
-            <h2 class="font-display text-3xl font-extrabold capitalize">${creature.species.name}</h2>
-            <span class="rounded-full bg-brand-light px-3 py-1 text-sm font-bold capitalize">${primaryType}</span>
+            <h2 class="font-display text-3xl font-extrabold capitalize">${creature.name}</h2>
+            <span class="rounded-full bg-brand-light px-3 py-1 text-sm font-bold capitalize">${creature.primaryType}</span>
         </div>
         <p class="text-gray-700">Une créature unique prête pour l'aventure.</p>
         <div class="flex flex-col gap-2 text-sm">
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">HP</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(HP)}%;"></span></span><span class="text-right font-mono">${HP}</span></div>
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">Attaque</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(ATTACK)}%;"></span></span><span class="text-right font-mono">${ATTACK}</span></div>
-            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">Défense</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(DEFENCE)}%;"></span></span><span class="text-right font-mono">${DEFENCE}</span></div>
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">HP</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(creature.HP)}%;"></span></span><span class="text-right font-mono">${creature.HP}</span></div>
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">Attaque</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(creature.ATTACK)}%;"></span></span><span class="text-right font-mono">${creature.ATTACK}</span></div>
+            <div class="grid grid-cols-[80px_1fr_40px] items-center gap-2"><span class="font-bold">Défense</span><span class="h-3 rounded-full bg-ground"><span class="block h-3 rounded-full bg-brand" style="width:${Number(creature.DEFENCE)}%;"></span></span><span class="text-right font-mono">${creature.DEFENCE}</span></div>
         </div>
         <button type="button" class="btn-primary">Ajouter à l'équipe</button>
     `;
@@ -112,9 +104,7 @@ function searchFilter() {
 
         const perName = creature.name.toLowerCase().includes(text);
 
-        const primaryType = creature.types[0]?.type?.name || 'normal';
-
-        const perType = currentType === "tous" || primaryType === currentType;
+        const perType = currentType === "tous" || creature.primaryType === currentType;
 
         return perName && perType;
     });
@@ -361,7 +351,7 @@ function formValidation() {
         level: "Niveau " + document.querySelector("#level").value.trim(),
         image: document.querySelector("#img").value.trim(),
         description: document.querySelector("#description").value.trim(),
-        icon: "",
+        // icon: "",
         // stats: {
         //   attack: Number(document.querySelector("#attack").value),
         //   defence: Number(document.querySelector("#defence").value),

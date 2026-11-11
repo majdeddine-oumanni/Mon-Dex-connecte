@@ -1,8 +1,10 @@
+let customizedCreatures = [];
+
 export async function getCreatures(limit) {
     try{
 
         let response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}`);
-        
+
         if(!response.ok){
             throw new Error("the fetch wasn't successful");
         }
@@ -16,8 +18,20 @@ export async function getCreatures(limit) {
         })
 
         let creatures = await Promise.all(promises);
-        console.log(creatures);
-        return creatures;
+        creatures.forEach((creature)=>{
+            customizedCreatures.push({
+                id: creature.id,
+                name: creature.species.name,
+                image: creature.sprites.other?.['official-artwork']?.front_default || creature.sprites.front_default,
+                primaryType: creature.types[0]?.type?.name || 'normal',
+                totalStats: creature.stats.reduce((sum, stat) => sum + stat.base_stat, 0),
+                HP: creature.stats[0].base_stat,
+                ATTACK: creature.stats[1].base_stat,
+                DEFENCE: creature.stats[2].base_stat
+            })
+        })
+
+        return customizedCreatures;
 
     }catch(error){
         console.error(error);
