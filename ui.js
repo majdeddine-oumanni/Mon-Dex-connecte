@@ -1,4 +1,4 @@
-import { getCreatures } from "./api.js";
+import { getCreatures, research } from "./api.js";
 
 let cardsContainer = document.querySelector(".cards-container");
 let detailSection = document.getElementById("detail");
@@ -112,23 +112,26 @@ const filtersContainer = document.querySelector("#filters");
 let currentType = "tous"; 
 
 function searchFilter() {
-    const text = rech.value.toLowerCase().trim();
 
-    const res = allCreatures.filter((creature) => {
+    rech.addEventListener('keydown', async (e)=>{
+        if(e.key == "Enter"){
+            
+            const text = rech.value.toLowerCase().trim();
 
-        const perName = creature.name.toLowerCase().includes(text);
+            if(!text){
+                return;
+            }
 
-        const perType = currentType === "tous" || creature.primaryType === currentType;
+            const creature = await research(text);
 
-        return perName && perType;
-    });
-
-    init(res);
+            if(creature){
+                init([creature]);
+            }
+        }
+    })
 }
+searchFilter();
 
-if (rech) {
-    rech.addEventListener("input", searchFilter);
-}
 
 
 // -------------------------------------------------------------
