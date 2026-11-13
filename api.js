@@ -34,6 +34,7 @@ export async function getCreatures(limit, offset) {
 
     }catch(error){
         console.error(error);
+        return [];
     }
 }
 
@@ -60,5 +61,6 @@ export async function research(name) {
         return foundedCreature;
     }catch(error){
         console.error("error: " + error);
+        return null;
     }
 }
